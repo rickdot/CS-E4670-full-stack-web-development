@@ -1,0 +1,7 @@
+browser->server: HTTP POST https://studies.cs.helsinki.fi/exampleapp/new_note_spa
+server-->browser: Status Code 201, {"message": "note created"}
+
+note over browser:
+the event handler in js-code added the new note to the note lists, rerendered the 
+note list on the page and also send the new note to the server
+end note
