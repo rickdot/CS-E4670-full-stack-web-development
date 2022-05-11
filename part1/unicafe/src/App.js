@@ -1,6 +1,8 @@
 import { useState } from 'react'
 
-const Statistics = props => <div>statistics {props.value}%</div>
+const Statistics = (props) => {
+  return (<div>statistics {props.value}%</div>)
+}
 
 const Display = props => <div>{props.text} {props.value}</div>
 
