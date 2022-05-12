@@ -1,6 +1,16 @@
 const Header = ({ course }) => <h1>{course}</h1>
 
-const Total = ({ sum }) => <p>Number of exercises {sum}</p>
+const Total = ({parts}) => {
+  // exercise 2.3
+  const ary = parts.map(part => part.exercises)
+  // console.log(ary);
+  const sum = ary.reduce((total,num) => total+num )
+  return(
+    <b>total of {sum} exercises </b>
+  )
+}
+
+
 
 const Part = ({ part }) => 
   <p>
@@ -19,6 +29,17 @@ const Content = ({ parts }) =>
       part={parts[2]} 
     />      
   </>
+
+
+const Course = ({course, parts}) => {
+  return (
+    <div>
+      <Header course={course} />
+      <Content parts={parts} />
+      <Total parts={parts} />
+    </div>
+  )
+}
 
 const App = () => {
   const course = 'Half Stack application development'
@@ -39,9 +60,8 @@ const App = () => {
 
   return (
     <div>
-      <Header course={course} />
-      <Content parts={parts} />
-      <Total sum={parts[0].exercises + parts[1].exercises + parts[2].exercises} />
+      <Course course={course} parts={parts}/>
+      
     </div>
   )
 }
