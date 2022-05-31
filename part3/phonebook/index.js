@@ -34,6 +34,19 @@ app.get('/api/persons', (request, response) => {
   response.json(notes)  
 })  
 
+
+app.get('/api/persons/:id', (request, response) => {
+    const id = Number(request.params.id)
+    const note = notes.find(note => note.id === id)
+    
+    if (note) {   // all objects are true,  undefined is false
+      response.json(note)
+    } else {
+      response.status(404).end()   // status method: set the status
+    }                    // end method: respond without sending any data
+})
+
+
 app.get('/info', (request, response) => {
     let time = new Date();
     console.log(time);
