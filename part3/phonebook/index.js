@@ -4,9 +4,11 @@ const app = express()
 
 
 
+var morgan = require('morgan')
+
+
 app.use(express.json())
-
-
+app.use(morgan('tiny'))
 
 let notes = 
 [
@@ -121,7 +123,6 @@ app.post('/api/persons', (request, response) => {
   
     response.json(note)
   })
-
 
 
 
