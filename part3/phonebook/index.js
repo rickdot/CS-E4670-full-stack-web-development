@@ -1,6 +1,13 @@
 const express = require('express')
 const app = express()
 
+
+
+
+app.use(express.json())
+
+
+
 let notes = 
 [
     { 
@@ -66,6 +73,43 @@ app.delete('/api/persons/:id', (request, response) => {
   
     response.status(204).end()
 })
+
+
+const generateId = () => {
+  // range 0-9999
+  let newID = Math.floor(Math.random() * 10000)
+  idarr = notes.map(n => n.id)
+  while (idarr.includes(newID)){
+    newID = Math.floor(Math.random() * 10000)
+  }
+  return newID
+}
+
+
+
+app.post('/api/persons', (request, response) => {
+    const body = request.body
+    // console.log(body)
+
+    if (!body.name) {
+      return response.status(400).json({ 
+        error: 'name missing' 
+      })
+    }
+  
+    const note = {
+      id: generateId(),
+      name: body.name,
+      number: body.number,      
+    }
+  
+    notes = notes.concat(note)
+  
+    response.json(note)
+  })
+
+
+
 
 const PORT = 3001
 app.listen(PORT, () => {
