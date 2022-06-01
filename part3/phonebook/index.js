@@ -96,7 +96,21 @@ app.post('/api/persons', (request, response) => {
         error: 'name missing' 
       })
     }
-  
+
+    if (!body.number) {
+      return response.status(400).json({ 
+        error: 'number missing' 
+      })
+    }
+
+    namearr = notes.map(n => n.name)
+    if (namearr.includes(body.name)){
+      return response.status(400).json({
+        error: 'name must be unique'
+      })
+    }
+    
+
     const note = {
       id: generateId(),
       name: body.name,
