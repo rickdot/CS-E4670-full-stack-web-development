@@ -1,5 +1,9 @@
 import { useState } from 'react'
 
+
+
+
+
 const Person = ({person}) => 
   <div>
     {person.name} {person.number}
@@ -16,7 +20,8 @@ const App = () => {
   // state of input fields
   const [newName, setNewName] = useState('')
   const [newNum, setNewNum] = useState('')
-
+  const [filter, setFilter] = useState('')
+  
   const addPerson = (event) => {
     event.preventDefault()
     const newPerson = {
@@ -49,10 +54,29 @@ const App = () => {
     setNewNum(event.target.value)
   }
 
+  const handleFilter = (event) => {
+    // console.log(event.target.value);
+    setFilter(event.target.value)
+  }
+
+  let personsToShow = []
+  for(let i=0; i<persons.length; i++){
+    if(persons[i].name.toLowerCase().includes(filter.toLowerCase())){
+      personsToShow.push(persons[i])
+    }
+  }
 
   return (
     <div>
       <h2>Phonebook</h2>
+      <form>
+        <div>
+          filter shown with <input value={filter} onChange={handleFilter}/>
+        </div>
+
+      </form>
+
+      <h2> add a new </h2>
       <form onSubmit={addPerson}>
         <div>
           name: <input value={newName} onChange={handleNameChange} />
@@ -65,7 +89,7 @@ const App = () => {
         </div>
       </form>
       <h2>Numbers</h2>
-        {persons.map((person, i) => <Person key={i} person={person} />)}
+        {personsToShow.map((person, i) => <Person key={i} person={person} />)}
     </div>
   )
 }
