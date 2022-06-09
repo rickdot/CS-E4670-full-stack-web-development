@@ -1,2 +1,4 @@
 # FullStackWebDevelopment
-This is my repository for FSWD course exercises
+My solutions for CS-E4670 Full Stack Web Development, offered by the University of Helsinki.
+
+Link to course website: https://fullstackopen.com/
