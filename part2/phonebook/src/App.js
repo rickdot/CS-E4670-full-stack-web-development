@@ -1,13 +1,36 @@
 import { useState } from 'react'
 
 
+const Filter = (props) => 
+  <form>
+      filter shown with <input value={props.filter} onChange={props.onChange}/>
+  </form>
 
+const PersonForm = (props) => 
+  <form onSubmit={props.addPerson}>
+    <div>
+      name: <input value={props.newName} onChange={props.nameHandler} />
+    </div>
+    <div>
+      number: <input value={props.newNum} onChange={props.numHandler} />
+    </div>
+    <div>
+      <button type="submit">add</button>
+    </div>
+  </form>
+  
 
 
 const Person = ({person}) => 
   <div>
     {person.name} {person.number}
   </div>
+
+const Persons = (props) => 
+  <div>
+    {props.personsToShow.map((person, i) => <Person key={i} person={person} />)}
+  </div>
+  
 
 const App = () => {
   const [persons, setPersons] = useState([
@@ -20,28 +43,24 @@ const App = () => {
   // state of input fields
   const [newName, setNewName] = useState('')
   const [newNum, setNewNum] = useState('')
-  const [filter, setFilter] = useState('')
-  
+  const [filterVal, setFilterVal] = useState('')
+
   const addPerson = (event) => {
     event.preventDefault()
     const newPerson = {
       name: newName,
       number: newNum
     }
+
     // check name existence
-    let flag = 0
     for(let i=0; i<persons.length; i++){
       if(JSON.stringify(persons[i].name) === JSON.stringify(newPerson.name)){
-        flag = 1
-        break
+        alert(`${newName} is already added to phonebook`)
+        return
       }
     }
 
-    if(flag){
-      alert(`${newName} is already added to phonebook`)
-    } else {
-      setPersons(persons.concat(newPerson))
-    }
+    setPersons(persons.concat(newPerson))
   }
 
   const handleNameChange = (event) => {
@@ -56,12 +75,13 @@ const App = () => {
 
   const handleFilter = (event) => {
     // console.log(event.target.value);
-    setFilter(event.target.value)
+    setFilterVal(event.target.value)
   }
+
 
   let personsToShow = []
   for(let i=0; i<persons.length; i++){
-    if(persons[i].name.toLowerCase().includes(filter.toLowerCase())){
+    if(persons[i].name.toLowerCase().includes(filterVal.toLowerCase())){
       personsToShow.push(persons[i])
     }
   }
@@ -69,27 +89,18 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <form>
-        <div>
-          filter shown with <input value={filter} onChange={handleFilter}/>
-        </div>
 
-      </form>
+      <Filter value={filterVal} onChange={handleFilter} />
 
-      <h2> add a new </h2>
-      <form onSubmit={addPerson}>
-        <div>
-          name: <input value={newName} onChange={handleNameChange} />
-        </div>
-        <div>
-          number: <input value={newNum} onChange={handleNumChange} />
-        </div>
-        <div>
-          <button type="submit">add</button>
-        </div>
-      </form>
-      <h2>Numbers</h2>
-        {personsToShow.map((person, i) => <Person key={i} person={person} />)}
+      <h3> Add a new </h3>
+
+      <PersonForm newName={newName} nameHandler={handleNameChange} 
+        newNum={newNum} numHandler={handleNumChange} 
+        addPerson={addPerson}/>
+
+      <h3>Numbers</h3>
+
+      <Persons personsToShow={personsToShow}/>
     </div>
   )
 }
