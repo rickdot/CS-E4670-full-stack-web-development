@@ -7,9 +7,22 @@ const Search = (props) =>
       find countries <input value={props.filter} onChange={props.onChange}/>
   </form>
 
-const CountryName = ({countries}) => 
+const Country = ({country, setSearch}) => {
+  
+  return(
+    <div>
+      {country.name.common}
+      <button onClick={() => setSearch(country.name.common)}>
+        show
+      </button>
+    </div>
+    
+  )
+}
+
+const Countries = ({countries, setSearch}) => 
   <div>
-    {countries.map((country, i) => <div> {country.name.common} </div> )}
+    {countries.map((country, i) => <Country key={i} country={country} setSearch={setSearch}/>)}
   </div> 
 
 const CountryInfo = ({country}) => 
@@ -23,7 +36,7 @@ const Languages = ({country}) =>
   <div>
     <h2>languages:</h2>
     <ul>
-      {Object.entries(country.languages).map(lang => <li>{lang[1]}</li>)}
+      {Object.entries(country.languages).map((lang, i) => <li key={i}>{lang[1]}</li>)}
     </ul>
   </div> 
 
@@ -35,6 +48,8 @@ const Flag = ({country}) =>
 
 const App = () => {
   const [countries, setCountries] = useState([])
+  const [search, setSearch] = useState('')
+  // const [countryToShow, setCountryToShow] = useState([])
 
   const hook = () => {
     axios
@@ -44,39 +59,31 @@ const App = () => {
       })
   }
   useEffect(hook, [])
-
-
-  // state of input fields
-  const [search, setSearch] = useState('')
-
   
-  const handleFilter = (event) => {
+  const handleSearch = (event) => {
     setSearch(event.target.value)
   }
 
+  console.log(search);
+
+  const countriesToShow = countries.filter(c => c.name.common.toLowerCase().includes(search.toLowerCase()))
   
-  let countriesToShow = []
-  for(let i=0; i<countries.length; i++){
-    if(countries[i].name.common.toLowerCase().includes(search.toLowerCase())){
-      countriesToShow.push(countries[i])
-    }
-  }
 
   if(countriesToShow.length > 10){
     return(
       <div>
-        <Search value={search} onChange={handleFilter} />
+        <Search value={search} onChange={handleSearch} />
         Too many matches, specify another filter
       </div>
     )
   }
 
-  if(countriesToShow.length === 1){
+  if(countriesToShow.length === 1 ){
     const country = countriesToShow[0]
     // console.log(country);
     return(
       <div>
-        <Search value={search} onChange={handleFilter} />
+        <Search value={search} onChange={handleSearch} />
         
         <CountryInfo country={country} />
 
@@ -90,9 +97,9 @@ const App = () => {
 
   return (
     <div>
-      <Search value={search} onChange={handleFilter} />
+      <Search value={search} onChange={handleSearch} />
 
-      <CountryName countries={countriesToShow}/>
+      <Countries countries={countriesToShow} setSearch={setSearch}/>
     </div>
   )
 }
