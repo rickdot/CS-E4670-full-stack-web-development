@@ -44,12 +44,47 @@ const Languages = ({country}) =>
 const Flag = ({country}) => 
   <img src={country.flags.png} alt='flag_image' />
 
+const Weather = ({country}) => {
+  const [weather, setWeather] = useState({})
+
+  const lat = country.capitalInfo.latlng[0]
+  const lng = country.capitalInfo.latlng[1]
+  const api_key = process.env.REACT_APP_API_KEY
+  // const api_key = ''
+
+  const hook = () => {
+    axios
+      .get(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lng}&units=metric&appid=${api_key}`)
+      .then(response => {
+        setWeather(response.data)
+      })
+  }
+  useEffect(hook, [lat, lng, api_key])
+
+
+  if(weather.main !== undefined){
+    return(
+      <div>
+        <h2>Weather in {country.name.common} </h2>
+        temperature {weather.main.temp} Celcius 
+        <br/>
+        <img src={`http://openweathermap.org/img/wn/${weather.weather[0].icon}@2x.png`} alt="icon"/>
+        <br/>
+        wind: {weather.wind.speed} m/s
+      </div>
+    )
+  }
+  return(
+    <div></div>
+  )
+
+}
+  
 
 
 const App = () => {
   const [countries, setCountries] = useState([])
   const [search, setSearch] = useState('')
-  // const [countryToShow, setCountryToShow] = useState([])
 
   const hook = () => {
     axios
@@ -64,11 +99,9 @@ const App = () => {
     setSearch(event.target.value)
   }
 
-  console.log(search);
 
   const countriesToShow = countries.filter(c => c.name.common.toLowerCase().includes(search.toLowerCase()))
   
-
   if(countriesToShow.length > 10){
     return(
       <div>
@@ -80,7 +113,6 @@ const App = () => {
 
   if(countriesToShow.length === 1 ){
     const country = countriesToShow[0]
-    // console.log(country);
     return(
       <div>
         <Search value={search} onChange={handleSearch} />
@@ -91,6 +123,7 @@ const App = () => {
         
         <Flag country={country} />
 
+        <Weather country={country}/>
       </div>
     )
   }

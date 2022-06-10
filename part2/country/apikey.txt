@@ -1,0 +1,2 @@
+set REACT_APP_API_KEY=b5afa2f7f61842efafb84f2b5fde73bd && npm start 
+// For Windows cmd.exe
