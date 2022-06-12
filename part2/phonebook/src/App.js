@@ -22,14 +22,19 @@ const PersonForm = (props) =>
   
 
 
-const Person = ({person}) => 
-  <div>
-    {person.name} {person.number}
+const Person = ({person, deletePerson}) => {
+  return(
+    <div>
+    {person.name} {person.number} <button onClick={()=>deletePerson(person.id)}>delete</button>
   </div>
+  )
+  
+}
+  
 
-const Persons = (props) => 
+const Persons = ({personsToShow, deletePerson}) => 
   <div>
-    {props.personsToShow.map((person, i) => <Person key={i} person={person} />)}
+    {personsToShow.map((person, i) => <Person key={i} person={person} deletePerson={deletePerson}/>)}
   </div>
   
 
@@ -96,6 +101,15 @@ const App = () => {
     setFilterVal(event.target.value)
   }
 
+  const deletePerson = id => {
+    // console.log(id);
+    personService
+    .deleteOne(id)
+    .then(() => {
+      const newPersons = persons.filter(person => person.id != id)
+      setPersons(newPersons)
+    })
+  }
 
   let personsToShow = []
   for(let i=0; i<persons.length; i++){
@@ -118,7 +132,7 @@ const App = () => {
 
       <h3>Numbers</h3>
 
-      <Persons personsToShow={personsToShow}/>
+      <Persons personsToShow={personsToShow} deletePerson={deletePerson}/>
     </div>
   )
 }
