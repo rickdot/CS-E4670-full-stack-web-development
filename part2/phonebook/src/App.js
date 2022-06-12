@@ -62,28 +62,46 @@ const App = () => {
 
   const addPerson = (event) => {
     event.preventDefault()
-    const newPerson = {
-      name: newName,
-      number: newNum
-    }
+    
+    const personObject = persons.find(person => person.name === newName)
 
-    // check name existence
-    for(let i=0; i<persons.length; i++){
-      if(JSON.stringify(persons[i].name) === JSON.stringify(newPerson.name)){
-        alert(`${newName} is already added to phonebook`)
-        return
+    // doesn't exist
+    if(personObject === undefined){
+      const newPerson = {
+        name: newName,
+        number: newNum
       }
+      personService
+        .create(newPerson)
+        .then(response => {
+          setPersons(persons.concat(response.data))
+          setNewName('')
+          setNewNum('')
+        })
+        return
+    }
+
+    // already exist. confirm
+    if(window.confirm(`${personObject.name} is already added to the phonebook, replace the old number with a new one?`)){
+      personService.deleteOne(personObject.id)
+          
+      let persons_copy  = persons.filter(person => person.id !== personObject.id)
+      const newObject = {
+        name: newName,
+        number: newNum,
+        id: personObject.id
+      }
+      personService
+        .create(newObject)
+        .then(response => {
+          setPersons(persons_copy.concat(response.data))
+          setNewName('')
+          setNewNum('')
+        })
     }
     
-    personService
-    .create(newPerson)
-    .then(response => {
-      setPersons(persons.concat(response.data))
-      setNewName('')
-      setNewNum('')
-    })
 
-    
+
   }
 
   const handleNameChange = (event) => {
@@ -102,13 +120,17 @@ const App = () => {
   }
 
   const deletePerson = id => {
-    // console.log(id);
-    personService
-    .deleteOne(id)
-    .then(() => {
-      const newPersons = persons.filter(person => person.id != id)
-      setPersons(newPersons)
-    })
+    const personObject = persons.find(person => person.id === id)
+    console.log(personObject.id);
+    if(window.confirm(`Delete ${personObject.name}?`)){
+      personService
+        .deleteOne(id)
+        .then(() => {
+          const newPersons = persons.filter(person => person.id !== id)
+          setPersons(newPersons)
+        })
+    }
+    
   }
 
   let personsToShow = []
