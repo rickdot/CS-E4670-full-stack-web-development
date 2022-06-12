@@ -38,6 +38,20 @@ const Persons = ({personsToShow, deletePerson}) =>
   </div>
   
 
+const Notification = ({ message }) => {
+  if (message === null) {
+    return null
+  }
+
+  return (
+    <div className='error'>
+      {message}
+    </div>
+  )
+}
+
+
+
 const App = () => {
   const [persons, setPersons] = useState([])
 
@@ -45,7 +59,7 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNum, setNewNum] = useState('')
   const [filterVal, setFilterVal] = useState('')
-
+  const [errorMessage, setErrorMessage] = useState(null)
 
   const hook = () => {
     // console.log('effect')
@@ -77,6 +91,12 @@ const App = () => {
           setPersons(persons.concat(response.data))
           setNewName('')
           setNewNum('')
+          setErrorMessage(
+            `Added ${newPerson.name}`
+          )
+          setTimeout(() => {
+            setErrorMessage(null)
+          }, 5000)
         })
         return
     }
@@ -97,6 +117,12 @@ const App = () => {
           setPersons(persons_copy.concat(response.data))
           setNewName('')
           setNewNum('')
+          setErrorMessage(
+            `The number of ${newObject.name} is changed`
+          )
+          setTimeout(() => {
+            setErrorMessage(null)
+          }, 5000)
         })
     }
     
@@ -143,6 +169,8 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      
+      <Notification message={errorMessage} />
 
       <Filter value={filterVal} onChange={handleFilter} />
 
