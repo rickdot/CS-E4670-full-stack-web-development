@@ -1,98 +1,59 @@
 import { useState, useEffect } from 'react'
+
 import personService from './service/person.js'
-
-
-const Filter = (props) => 
-  <form>
-      filter shown with <input value={props.filter} onChange={props.onChange}/>
-  </form>
-
-const PersonForm = (props) => 
-  <form onSubmit={props.addPerson}>
-    <div>
-      name: <input value={props.newName} onChange={props.nameHandler} />
-    </div>
-    <div>
-      number: <input value={props.newNum} onChange={props.numHandler} />
-    </div>
-    <div>
-      <button type="submit">add</button>
-    </div>
-  </form>
-  
-
-
-const Person = ({person, deletePerson}) => {
-  return(
-    <div>
-    {person.name} {person.number} <button onClick={()=>deletePerson(person.id)}>delete</button>
-  </div>
-  )
-  
-}
-  
-
-const Persons = ({personsToShow, deletePerson}) => 
-  <div>
-    {personsToShow.map((person, i) => <Person key={i} person={person} deletePerson={deletePerson}/>)}
-  </div>
-  
-
-const Notification = ({ message }) => {
-  if (message === null) {
-    return null
-  }
-
-  return (
-    <div className='error'>
-      {message}
-    </div>
-  )
-}
-
-
+import Persons  from './components/Persons'
+import Search from './components/Search'
+import PersonForm from './components/PersonForm'
+import Notification from './components/Notification'
 
 const App = () => {
   const [persons, setPersons] = useState([])
-
   // state of input fields
   const [newName, setNewName] = useState('')
   const [newNum, setNewNum] = useState('')
-  const [filterVal, setFilterVal] = useState('')
+  const [search, setSearch] = useState('')
   const [errorMessage, setErrorMessage] = useState(null)
 
+  const handleNameChange = (event) => {
+    setNewName(event.target.value)
+  }
+
+  const handleNumChange = (event) => {
+    setNewNum(event.target.value)
+  }
+
+  const handleFilter = (event) => {
+    setSearch(event.target.value)
+  }
+
+
   const hook = () => {
-    // console.log('effect')
     personService
       .getAll()
-      .then(response => {
-        // console.log('promise fulfilled')
-        setPersons(response.data)
+      .then(initialPersons => {
+        setPersons(initialPersons)
       })
   }
-  
   useEffect(hook, [])
-
 
   const addPerson = (event) => {
     event.preventDefault()
-    
-    const personObject = persons.find(person => person.name === newName)
+    const foundObject = persons.find(person => person.name === newName)
 
     // doesn't exist
-    if(personObject === undefined){
-      const newPerson = {
+    if(foundObject === undefined){
+      const newObject = {
         name: newName,
         number: newNum
       }
       personService
-        .create(newPerson)
-        .then(response => {
-          setPersons(persons.concat(response.data))
+        .create(newObject)
+        .then(returnedPersons => {  // retPersons is the new person object
+          setPersons(persons.concat(returnedPersons))
           setNewName('')
           setNewNum('')
           setErrorMessage(
-            `Added ${newPerson.name}`
+            `Added ${newObject.name}`
           )
           setTimeout(() => {
             setErrorMessage(null)
@@ -101,70 +62,35 @@ const App = () => {
         return
     }
 
-    // already exist. confirm
-    if(window.confirm(`${personObject.name} is already added to the phonebook, replace the old number with a new one?`)){
-      personService.deleteOne(personObject.id)
-          
-      let persons_copy  = persons.filter(person => person.id !== personObject.id)
-      const newObject = {
-        name: newName,
-        number: newNum,
-        id: personObject.id
-      }
+    // already exist    confirm
+    if(window.confirm(`${foundObject.name} is already added to the phonebook, replace the old number with a new one?`)){
+      const newPerson = {...foundObject, number: newNum}
       personService
-        .create(newObject)
-        .then(response => {
-          setPersons(persons_copy.concat(response.data))
-          setNewName('')
-          setNewNum('')
-          setErrorMessage(
-            `The number of ${newObject.name} is changed`
-          )
-          setTimeout(() => {
-            setErrorMessage(null)
-          }, 5000)
-        })
+      .update(foundObject.id, newPerson)
+      .catch(error => {
+        setErrorMessage(`Information of ${newName} has already been removed from server`)
+        setPersons(persons.filter(person => person.id !== foundObject.id))
+        setTimeout(() => {
+          setErrorMessage(null)
+        }, 3000)
+      }
+      )
     }
-    
-
-
   }
 
-  const handleNameChange = (event) => {
-    // console.log(event.target.value);
-    setNewName(event.target.value)
-  }
-
-  const handleNumChange = (event) => {
-    // console.log(event.target.value);
-    setNewNum(event.target.value)
-  }
-
-  const handleFilter = (event) => {
-    // console.log(event.target.value);
-    setFilterVal(event.target.value)
-  }
 
   const deletePerson = id => {
     const personObject = persons.find(person => person.id === id)
-    console.log(personObject.id);
     if(window.confirm(`Delete ${personObject.name}?`)){
       personService
         .deleteOne(id)
         .then(() => {
-          const newPersons = persons.filter(person => person.id !== id)
-          setPersons(newPersons)
+          setPersons(persons.filter(person => person.id !== id)) // remove it from persons
         })
     }
-    
   }
 
-  let personsToShow = []
-  for(let i=0; i<persons.length; i++){
-    if(persons[i].name.toLowerCase().includes(filterVal.toLowerCase())){
-      personsToShow.push(persons[i])
-    }
-  }
+  const personsToShow = persons.filter(person => person.name.toLowerCase().includes(search.toLowerCase()))
 
   return (
     <div>
@@ -172,7 +98,7 @@ const App = () => {
       
       <Notification message={errorMessage} />
 
-      <Filter value={filterVal} onChange={handleFilter} />
+      <Search value={search} onChange={handleFilter} />
 
       <h3> Add a new </h3>
 
