@@ -115,33 +115,36 @@ describe('favoriteBlog', () => {
 
 
 describe('mostBlogs', () => {
-    const listWithOneBlog = [
-        blogs[0]
-    ]
 
     test('of empty list is undefined', () => {
-        const result = listHelper.favoriteBlog([])
+        const result = listHelper.mostBlogs([])
         expect(result).toBe(undefined)
     })
 
-    test('when list has only one blog, equals the blog', () => {
-        const result = listHelper.favoriteBlog(listWithOneBlog)
+    test('of a bigger list is calculated right', () => {
+        const result = listHelper.mostBlogs(blogs)
         expect(result).toEqual(
             {
-                title: "React patterns",
-                author: "Michael Chan",
-                likes: 7,
+                author: "Robert C. Martin",
+                blogs: 3
             }
         )
     })
+})
+
+describe('mostLikes', () => {
+
+    test('of empty list is undefined', () => {
+        const result = listHelper.mostLikes([])
+        expect(result).toBe(undefined)
+    })
 
     test('of a bigger list is calculated right', () => {
-        const result = listHelper.favoriteBlog(blogs)
+        const result = listHelper.mostLikes(blogs)
         expect(result).toEqual(
             {
-                title: "Canonical string reduction",
                 author: "Edsger W. Dijkstra",
-                likes: 12,
+                likes: 17
             }
         )
     })
