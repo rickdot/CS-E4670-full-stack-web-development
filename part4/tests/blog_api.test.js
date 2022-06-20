@@ -24,7 +24,6 @@ test('blogs are returned as json', async () => {
 // 4.9
 test('the unique identifier property of the blog posts is named _id', async () => {
     const response = await api.get('/api/blogs')
-    console.log(response.body[0]);
     expect(response.body[0]._id).toBeDefined()
 })
 
@@ -74,7 +73,6 @@ test('missing likes property will default to the value 0', async () => {
     expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length + 1)
 
     const blog = blogsAtEnd.find(n => n.title === newBlog.title)
-    console.log(blog);
     expect(blog.likes).toBe(0)
 
 })
@@ -101,6 +99,42 @@ test('cannot add blog with missing url', async () => {
     .send(newBlog)
     .expect(400)
 })
+
+
+// 4.13
+test('can delete a blog', async () => {
+    const blogsAtStart = await helper.blogsInDb()
+    const blogToDelete = blogsAtStart[0]
+
+    await api
+        .delete(`/api/blogs/${blogToDelete._id}`)
+        .expect(204)
+
+    const blogsAtEnd = await helper.blogsInDb()
+
+    expect(blogsAtEnd).toHaveLength(
+        helper.initialBlogs.length - 1
+    )
+
+    const titles = blogsAtEnd.map(r => r.title)
+
+    expect(titles).not.toContain(blogToDelete.title)
+})
+
+test('cannot delete non-existing blog', async () => {
+
+    await api
+        .delete(`/api/blogs/invalidID`)
+        .expect(400)
+
+    const blogsAtEnd = await helper.blogsInDb()
+
+    expect(blogsAtEnd).toHaveLength(
+        helper.initialBlogs.length
+    )
+
+})
+
 
 
 afterAll(() => {
