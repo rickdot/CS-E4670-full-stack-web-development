@@ -135,6 +135,28 @@ test('cannot delete non-existing blog', async () => {
 
 })
 
+// 4.14
+test('can update a blog', async () => {
+
+    const blogToUpdate = helper.initialBlogs[0]
+    blogToUpdate.likes += 1
+    await api
+        .put(`/api/blogs/${blogToUpdate._id}`)
+        .send(blogToUpdate)
+        .expect(200)
+        .expect('Content-Type', /application\/json/)
+
+    const blogsAtEnd = await helper.blogsInDb()
+
+    expect(blogsAtEnd).toHaveLength(
+        helper.initialBlogs.length
+    )
+    
+    const likes = blogsAtEnd.map(n => n.likes)
+    expect(likes[0]).toBe(blogToUpdate.likes)
+
+})
+
 
 
 afterAll(() => {
