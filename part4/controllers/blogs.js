@@ -7,11 +7,37 @@ blogsRouter.get('/', async (request, response) => {
 })
   
 blogsRouter.post('/', async (request, response, next) => {
-  const blog = new Blog(request.body)
+  const body = request.body
+
+
+  const blog = new Blog(
+    {
+      _id: body._id,
+      title: body.title,
+      author: body.author,
+      url: body.url,
+      likes: body.likes || 0,
+      __v: body.__v
+    }
+  )
+
 
   try {
     const savedBlog = await blog.save()
     response.status(201).json(savedBlog)
+  } catch(exception) {
+    next(exception)
+  }
+})
+
+blogsRouter.get('/:id', async (request, response, next) => {
+  try {
+    const blog = await Blog.findById(request.params.id)
+    if (blog) {
+      response.json(blog.toJSON())
+    } else {
+      response.status(404).end()
+    }
   } catch(exception) {
     next(exception)
   }
