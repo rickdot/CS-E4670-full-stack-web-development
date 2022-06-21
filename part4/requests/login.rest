@@ -50,12 +50,12 @@ Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZ
 }
 
 ### delete successfully
-DELETE http://localhost:3001/api/blogs/62b2016c359afc45f308855c
+DELETE http://localhost:3001/api/blogs/62b21025ad8c16afa150227e
 Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXIyIiwiaWQiOiI2MmIxZTMxMWQ5OWNlNDFlNDBhNWFlZWYiLCJpYXQiOjE2NTU4MzI5MTd9.XbjP0sW_K_1JkL8ee0e4DmNjZa2yvpSpQT18vX2ivJQ
 
 
 ### delete: wrong token
-DELETE http://localhost:3001/api/blogs/62b2016c359afc45f308855c
+DELETE http://localhost:3001/api/blogs/62b21025ad8c16afa150227e
 Authorization: bearer 123
 
 ### delete: blog doesn't exist
@@ -63,6 +63,6 @@ DELETE http://localhost:3001/api/blogs/invlidPostId
 Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InJvb3QiLCJpZCI6IjYyYjFlMzBmZDk5Y2U0MWU0MGE1YWVlYyIsImlhdCI6MTY1NTgzMjU4NX0.m2lpgbqCK3Zcx1aUlqnlxdZl3Hk2UP5upuRra4E-LKc
 
 ### delete: token valid, but wrong user
-DELETE http://localhost:3001/api/blogs/62b2016c359afc45f308855c
+DELETE http://localhost:3001/api/blogs/62b21025ad8c16afa150227e
 Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InJvb3QiLCJpZCI6IjYyYjFlMzBmZDk5Y2U0MWU0MGE1YWVlYyIsImlhdCI6MTY1NTgzMjk4OX0.NN2YPH2pGE1GTZe9RitTpgjJou-RnfQ-rDkZCTIsGpk
 
