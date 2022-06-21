@@ -32,10 +32,10 @@ usersRouter.post('/', async (request, response) => {
         error: 'username must be unique'
         })
     }
- 
+
     const saltRounds = 10
     const passwordHash = await bcrypt.hash(password, saltRounds)
-
+    console.log(`create user: ${passwordHash}`);
     const user = new User({
         username,
         name,

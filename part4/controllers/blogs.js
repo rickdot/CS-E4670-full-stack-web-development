@@ -2,6 +2,8 @@ const blogsRouter = require('express').Router()
 const Blog = require('../models/blog')
 const User = require('../models/user')
 
+const jwt = require('jsonwebtoken')
+
 blogsRouter.get('/', async (request, response) => {
     const blogs = await Blog.find({}).populate('user', { username: 1, name: 1 })
     response.json(blogs)
@@ -10,7 +12,13 @@ blogsRouter.get('/', async (request, response) => {
 blogsRouter.post('/', async (request, response, next) => {
     const body = request.body
 
-    const users = await User.find({})
+    const decodedToken = jwt.verify(request.token, process.env.SECRET)
+
+    if (!decodedToken.id) {
+      return response.status(401).json({ error: 'token missing or invalid' })
+    }
+    const user = await User.findById(decodedToken.id)
+
     const blog = new Blog(
         {
             _id: body._id,
@@ -18,15 +26,14 @@ blogsRouter.post('/', async (request, response, next) => {
             author: body.author,
             url: body.url,
             likes: body.likes || 0,
-            user: users[0]
+            user: user.id
         }
     )
-
+    
     
 
   try {
     const savedBlog = await blog.save()
-    const user = users[0]
     user.blogs = user.blogs.concat(savedBlog._id)
     await user.save()
     response.status(201).json(savedBlog)
@@ -48,10 +55,39 @@ blogsRouter.get('/:id', async (request, response, next) => {
   }
 })
 
+
 blogsRouter.delete('/:id', async (request, response, next) => {
+
+  // check token first 
+  let decodedToken = null
+  try{
+    decodedToken = jwt.verify(request.token, process.env.SECRET)
+  } catch (error){
+    decodedToken = null
+  }
+  if (decodedToken === null) {
+    return response.status(401).json({ error: 'token missing or invalid' })
+  }
+  // console.log('token correct');
+
+  // check existence of the blog
+  const user = await User.findById(decodedToken.id)
+  const blog = await Blog.findById(request.params.id)
+
+  if (blog === null) {
+    return response.status(404).json({ error: 'blog doesn\'t exist' })
+  }
+  
+  // check if the user is same as the poster
+  const userSame = blog.user.toString() === user.id.toString()
+
   try {
-    await Blog.findByIdAndRemove(request.params.id)
-    response.status(204).end()
+    if(userSame){
+      await Blog.findByIdAndRemove(request.params.id)
+      response.status(204).end()
+    }
+      response.status(403).end()
+    
   } catch (exception) {
     next(exception)
   }

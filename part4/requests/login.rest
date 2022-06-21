@@ -1,0 +1,68 @@
+### create user
+POST http://localhost:3001/api/users
+Content-Type: application/json
+
+{
+    "username" : "root",
+    "name" : "superuser",
+    "password" : "12345678"
+}
+
+### create user 2
+POST http://localhost:3001/api/users
+Content-Type: application/json
+
+{
+    "username" : "user2",
+    "name" : "user2",
+    "password" : "123456"
+}
+
+### user2 login
+POST http://localhost:3001/api/login
+Content-Type: application/json
+
+{
+    "username" : "user2",
+    "password" : "123456"
+}
+
+### root login
+POST http://localhost:3001/api/login
+Content-Type: application/json
+
+{
+    "username" : "root",
+    "password" : "12345678"
+}
+
+###
+POST http://localhost:3001/api/blogs
+Content-Type: application/json
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXIyIiwiaWQiOiI2MmIxZTMxMWQ5OWNlNDFlNDBhNWFlZWYiLCJpYXQiOjE2NTU4MzI5MTd9.XbjP0sW_K_1JkL8ee0e4DmNjZa2yvpSpQT18vX2ivJQ
+
+{
+    "title": "React patterns",
+    "author": "Michael Chan",
+    "url": "https://reactpatterns.com/",
+    "likes": 7
+
+}
+
+### delete successfully
+DELETE http://localhost:3001/api/blogs/62b2016c359afc45f308855c
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXIyIiwiaWQiOiI2MmIxZTMxMWQ5OWNlNDFlNDBhNWFlZWYiLCJpYXQiOjE2NTU4MzI5MTd9.XbjP0sW_K_1JkL8ee0e4DmNjZa2yvpSpQT18vX2ivJQ
+
+
+### delete: wrong token
+DELETE http://localhost:3001/api/blogs/62b2016c359afc45f308855c
+Authorization: bearer 123
+
+### delete: blog doesn't exist
+DELETE http://localhost:3001/api/blogs/invlidPostId
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InJvb3QiLCJpZCI6IjYyYjFlMzBmZDk5Y2U0MWU0MGE1YWVlYyIsImlhdCI6MTY1NTgzMjU4NX0.m2lpgbqCK3Zcx1aUlqnlxdZl3Hk2UP5upuRra4E-LKc
+
+### delete: token valid, but wrong user
+DELETE http://localhost:3001/api/blogs/62b2016c359afc45f308855c
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InJvb3QiLCJpZCI6IjYyYjFlMzBmZDk5Y2U0MWU0MGE1YWVlYyIsImlhdCI6MTY1NTgzMjk4OX0.NN2YPH2pGE1GTZe9RitTpgjJou-RnfQ-rDkZCTIsGpk
+
