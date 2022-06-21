@@ -13,14 +13,24 @@ usersRouter.get('/', async (request, response) => {
 usersRouter.post('/', async (request, response) => {
     
     const { username, name, password } = request.body
-    console.log(username);
-    console.log(name);
-    console.log(password);
+
+    // validate password
+    if (password === undefined) {
+        return response.status(400).json({ error: 'password missing' })
+    }
+    if (!(typeof password === 'string' || password instanceof String)) {
+        return response.status(400).json({ error: 'password should be a string' })
+    }
+    if (password.length < 3) {
+        return response.status(400).json({ error: 'password must be more than 3 characters' })
+    }
+
+
     const existingUser = await User.findOne({ username })
-        if (existingUser) {
-            return response.status(400).json({
-            error: 'username must be unique'
-            })
+    if (existingUser) {
+        return response.status(400).json({
+        error: 'username must be unique'
+        })
     }
  
     const saltRounds = 10
@@ -33,7 +43,6 @@ usersRouter.post('/', async (request, response) => {
     })
 
     const savedUser = await user.save()
-
     response.status(201).json(savedUser)
 })
 

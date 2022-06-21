@@ -1,9 +1,20 @@
 const mongoose = require('mongoose')
 
 const userSchema = mongoose.Schema({
-  username: String,
-  name: String,
-  passwordHash: String,
+  username: {
+    type: String,
+    minLength: 3,
+    unique: true,
+    required: true
+  },
+  name: {
+    type: String
+  },
+  passwordHash: {
+    type: String,
+    // minLength: 3,
+    required: true
+  },
   blogs: [
     {
       type: mongoose.Schema.Types.ObjectId,
