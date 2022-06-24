@@ -8,19 +8,14 @@ import LoginForm from './components/LoginForm'
 import BlogForm from './components/BlogForm'
 import Togglable from './components/Togglable'
 
-
-// import { set } from 'mongoose'
- 
 const App = () => {
   const [blogs, setBlogs] = useState([])
-
   const [newTitle, setNewTitle] = useState('')
   const [newAuthor, setNewAuthor] = useState('')
   const [newUrl, setNewUrl] = useState('')
-  
-  const [errorMessage, setErrorMessage] = useState(null)
   const [username, setUsername] = useState('') 
   const [password, setPassword] = useState('')
+  const [errorMessage, setErrorMessage] = useState(null)
   const [user, setUser] = useState(null)
   
   useEffect(() => {
@@ -90,8 +85,7 @@ const App = () => {
     setUser(null)
   }
 
-    // console.log('user state:');
-    // console.log(user)
+
   return (
     <div>
       <Notification message={errorMessage} />
@@ -126,7 +120,7 @@ const App = () => {
       {blogs.map(blog => {
         return(
           
-            <Blog key={blog._id} blog={blog}  />
+            <Blog key={blog._id} blog={blog} setBlogs={setBlogs} blogs={blogs}/>
 
         )
       }
