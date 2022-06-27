@@ -1,5 +1,5 @@
-import axios from 'axios'
-const baseUrl = '/api/blogs'
+import axios from "axios"
+const baseUrl = "/api/blogs"
 
 let token = null
 
@@ -38,5 +38,16 @@ const update = async newObject => {
   return response.data
 }
 
-const exp = { getAll, create, setToken, clearToken, update }
+const deleteBlog = async (blogID) => {
+  const config = {
+    headers: { Authorization: token },
+  }
+  const blogUrl = baseUrl+`/${blogID}`
+
+  await axios.delete(blogUrl, config)
+
+
+}
+
+const exp = { getAll, create, setToken, clearToken, update, deleteBlog }
 export default exp

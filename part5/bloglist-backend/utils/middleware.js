@@ -42,11 +42,9 @@ const userExtractor = async (request, response, next) => {
   // get token
   let token = null
   const authorization = request.get('authorization')
-  console.log(`auth = ${authorization}`);
   if (authorization && authorization.toLowerCase().startsWith('bearer ')) {
     token =  authorization.substring(7)
   } 
-  console.log(`token = ${token}`);
 
   // check token
   let decodedToken = null
@@ -58,12 +56,10 @@ const userExtractor = async (request, response, next) => {
   // console.log(decodedToken);
 
   if(token === null || decodedToken === null){
-    console.log('wrong token');
     request.user = null
   } else {
-    console.log('correct token');
     request.user = await User.findById(decodedToken.id)
-    // console.log(request.user);
+
   }
 
   next()
@@ -74,6 +70,5 @@ module.exports = {
   requestLogger,
   unknownEndpoint,
   errorHandler,
-  // tokenExtractor,
   userExtractor
 }
