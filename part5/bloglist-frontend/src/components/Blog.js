@@ -1,7 +1,7 @@
 import { useState } from "react"
 import blogService from "../services/blogs"
 
-const Blog = ({ blog, setBlogs, blogs, user }) => {
+const Blog = ({ blog, setBlogs, blogs, user, toggleHandler, likeHandler }) => {
   const [detail, setDetail] = useState(false)
 
   const hideWhenVisible = { display: detail ? "none" : "" }
@@ -15,18 +15,25 @@ const Blog = ({ blog, setBlogs, blogs, user }) => {
     marginBottom: 5
   }
 
-  const toggleDetail = () => {
-    setDetail(!detail)
+  let toggleDetail = toggleHandler
+  if(!toggleHandler){
+    toggleDetail = () => {
+      setDetail(!detail)
+    }
   }
 
-  const handleLike = async () => {
-    const blogID = blog._id
-    const newBlog = { ...blog, likes:blog.likes+1 }
-    await blogService.update(newBlog, blog._id)
-    const updatedBlog = { ...newBlog, blogID }
+  let handleLike = likeHandler
+  if(!handleLike){
+    handleLike = async () => {
+      const blogID = blog._id
+      const newBlog = { ...blog, likes:blog.likes+1 }
+      await blogService.update(newBlog, blog._id)
+      const updatedBlog = { ...newBlog, blogID }
 
-    setBlogs(blogs.map((tempBlog) => (blog._id === tempBlog._id ? updatedBlog : tempBlog)))
+      setBlogs(blogs.map((tempBlog) => (blog._id === tempBlog._id ? updatedBlog : tempBlog)))
+    }
   }
+
 
   const handleDelete = async () => {
     const blogID = blog._id
@@ -40,17 +47,30 @@ const Blog = ({ blog, setBlogs, blogs, user }) => {
 
 
   return(
-    <div style={blogStyle}>
+    <div style={blogStyle} className="blog">
       {
         detail === false ?
           <div style={hideWhenVisible}>
-            {blog.title} {blog.author} <button onClick={toggleDetail}>View</button>
+            <div className="blogTitle">
+              {blog.title}
+            </div>
+            <div className="blogAuthor">
+              {blog.author} <button onClick={toggleDetail}>View</button>
+            </div>
           </div>   :
           <div style={showWhenVisible}>
-            Title: {blog.title} <button onClick={toggleDetail}>Hide</button> <br/>
-            Url: {blog.url} <br/>
-            Likes: {blog.likes} <button onClick={handleLike}>like</button> <br/>
-            Author: {blog.author} <br/>
+            <div className="blogTitle">
+              Title: {blog.title} <button onClick={toggleDetail}>Hide</button> <br/>
+            </div>
+            <div className="blogUrl">
+              Url: {blog.url} <br/>
+            </div>
+            <div className="blogLikes">
+              Likes: {blog.likes} <button onClick={handleLike}>like</button> <br/>
+            </div>
+            <div className="blogAuthor">
+              Author: {blog.author} <br/>
+            </div>
             { user && user.username === blog.user.username ?
               <button onClick={handleDelete}>Delete</button> :
               null
