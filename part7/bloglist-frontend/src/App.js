@@ -1,32 +1,38 @@
 import { useState, useEffect } from "react"
-import Blog from "./components/Blog"
 import blogService from "./services/blogs"
 
 import Notification from "./components/Notification"
 import LoginForm from "./components/LoginForm"
 import BlogForm from "./components/BlogForm"
 import Togglable from "./components/Togglable"
+import BlogList from "./components/BlogList"
+import {initializeBlogs} from "./reducers/blogReducer"
+import { useSelector, useDispatch } from "react-redux";
+import {setUserTo} from "./reducers/userReducer"
 
 function likesCompare(a,b) {
   return b.likes - a.likes
 }
 
 const App = () => {
-  const [blogs, setBlogs] = useState([])
   const [user, setUser] = useState(null)
 
+  const dispatch = useDispatch()
+
+  console.log(user);
+
   useEffect(() => {
-    blogService
-      .getAll()
-      .then(initialBlogs =>
-        setBlogs( initialBlogs )
-      )
-  }, [])
+    dispatch(initializeBlogs())
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps 
+
+
+  
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem("loggedBlogappUser")
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
+      // setUser(user)
       setUser(user)
       blogService.setToken(user.token)
     }
@@ -36,10 +42,10 @@ const App = () => {
     window.localStorage.clear()
     blogService.clearToken()
     setUser(null)
+    // setUser(null)
   }
 
-  let blogList = blogs
-  blogList.sort(likesCompare)
+
 
   return (
     <div>
@@ -58,24 +64,12 @@ const App = () => {
             <br/>
             <Togglable buttonLabel='create new blog' buttonLabel2='cancel'>
               <BlogForm
-                user={user}
-                setUser={setUser}
-                blogs={blogs}
-                setBlogs={setBlogs}
+                user={user} setUser={setUser}
               />
             </Togglable>
           </div>
       }
-      {blogs.map(blog => {
-        return(
-          <Blog key={blog._id}
-            blog={blog}
-            setBlogs={setBlogs}
-            blogs={blogs}
-            user={user}
-          />
-        )
-      })}
+      <BlogList user={user}/>
     </div>
   )
 }
