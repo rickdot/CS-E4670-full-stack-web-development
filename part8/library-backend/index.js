@@ -90,7 +90,6 @@ let books = [
 ]
 
 const typeDefs = gql`
-
   type Author {
     name: String!
     id: String!
@@ -105,7 +104,6 @@ const typeDefs = gql`
     id: ID!
     genres: [String]!
   }
-
 
   type Query {
     bookCount: Int!
@@ -159,7 +157,7 @@ const resolvers = {
     addBook: (root, args) => {
       const book = {...args, id: uuid()}
       books = books.concat(book)
-      
+    
       // check if author already exists
       const authorsArr = authors.map(e => e.name)
 
@@ -170,6 +168,7 @@ const resolvers = {
           born: null
         }
         authors = authors.concat(author)
+        
       }
       return book
     },
