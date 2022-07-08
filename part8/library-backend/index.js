@@ -186,8 +186,6 @@ const resolvers = {
     }
   }
 
-
-
 }
 
 const server = new ApolloServer({
