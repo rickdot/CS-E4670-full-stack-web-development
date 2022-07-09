@@ -1,3 +1,4 @@
+
 const calculateBmi = (height: number, weight: number) : string => {
     const bmi = weight / (Math.pow(height/100, 2))
     // console.log(bmi);
@@ -12,10 +13,15 @@ const calculateBmi = (height: number, weight: number) : string => {
     }
   }
   
+console.log(process.argv);
 
 
-const h: number = Number(process.argv[2])
-const w: number = Number(process.argv[3])
+
+if(process.argv.length > 2){
+    const h: number = Number(process.argv[2])
+    const w: number = Number(process.argv[3])
+    console.log(calculateBmi(h, w))
+}
 
 
-console.log(calculateBmi(h, w))
+export default calculateBmi
