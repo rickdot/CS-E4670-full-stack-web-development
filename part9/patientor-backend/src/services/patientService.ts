@@ -22,13 +22,17 @@ const getNoSsnPatients = (): NoSsnPatient[] => {
     }));
 };
 
+
+const findPatientById = (id: string): Patient | undefined => {
+    return patients.find(p => p.id === id)
+}
+
 const addPatient = (object: NewPatient): Patient => {
     const newPatient = {
         id: uuid(),
         ...object,
     }
     patientsData.push(newPatient)
-    console.log(patientsData);
     
     return newPatient
 }
@@ -37,5 +41,7 @@ const addPatient = (object: NewPatient): Patient => {
 export default {
     getPatients,
     getNoSsnPatients,
-    addPatient
+    findPatientById,
+    addPatient,
+    
 }
