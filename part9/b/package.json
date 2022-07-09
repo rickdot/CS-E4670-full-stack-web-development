@@ -1,0 +1,19 @@
+{
+  "name": "b",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "calculateBmi": "ts-node -- bmiCalculator.ts",
+    "calculateExercises": "ts-node -- exerciseCalculator.ts",
+    "ts-node": "ts-node",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^18.0.3",
+    "ts-node": "^10.8.2",
+    "typescript": "^4.7.4"
+  }
+}
