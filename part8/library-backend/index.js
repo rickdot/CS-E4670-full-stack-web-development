@@ -102,8 +102,16 @@ const resolvers = {
         return null
       }
       authorFound.born = args.setBornTo
-      const res = await authorFound.save()
-      return res
+      // const res = await authorFound.save()
+      try {
+        await authorFound.save()
+      } catch (error) {
+        throw new UserInputError(error.message, {
+          invalidArgs: args,
+        })
+      }
+
+      return authorFound.save()
     },
 
     // ok
