@@ -69,27 +69,29 @@ const resolvers = {
     // ok
     addBook: async (root, args) => {
       const books = await Book.find({}).populate('author')
-      // const authors = await Author.find({})
-    
-
-      // check if author already exists
-      const authorFind = await Author.findOne({name : args.author})
-      // console.log(authorFind);
       
+      // check if author already exists
+      const authorFind = await Author.findOne({name : args.author}) 
       if(!authorFind){
         const newAuthor = new Author({name: args.author, born: null})
         await newAuthor.save()
-        // console.log('added author!');
       }
       const resAuthor = await Author.find({name: args.author})
-      // console.log(resAuthor);
 
       // adding new book
       const newBook = new Book({ ...args, author: resAuthor[0]._id }) 
-      const res = await newBook.save()
-      // console.log(res);
-      const returnBook = await Book.findById(res._id).populate('author')
-      return returnBook
+      try {
+        const res = await newBook.save()
+        const returnBook = await Book.findById(res._id).populate('author')
+        return returnBook
+
+      } catch (error) {
+        throw new UserInputError(error.message, {
+          invalidArgs: args,
+        })
+      }
+      return null
+      
     },
 
     // ok
@@ -107,7 +109,13 @@ const resolvers = {
     // ok
     addAuthor: async (root, args) => {
       const author = new Author({ ...args })
-      console.log(author);
+      try {
+        await author.save()
+      } catch (error) {
+        throw new UserInputError(error.message, {
+          invalidArgs: args,
+        })
+      }
       return author.save()
     },
   }
