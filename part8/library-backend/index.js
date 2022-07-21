@@ -81,7 +81,6 @@ const resolvers = {
         throw new UserInputError("Authentication failed");
       }
 
-
       const books = await Book.find({}).populate('author')
       // check if author already exists
       const authorFind = await Author.findOne({name : args.author}) 
@@ -137,7 +136,10 @@ const resolvers = {
     },
 
     createUser: async (root, args) => {
-      const user = new User({ username: args.username, favoriteGenre:args.favoriteGenre })
+      // console.log(args.username);
+      // console.log(args.favouriteGenre);
+      const user = new User({ username: args.username, favouriteGenre: String(args.favouriteGenre) })
+      console.log(user);
       return user.save()
         .catch(error => {
           throw new UserInputError(error.message, {
@@ -147,9 +149,11 @@ const resolvers = {
     },
 
     login: async (root, args) => {
+      console.log(args);
       const user = await User.findOne({ username: args.username })
   
       if ( !user || args.password !== 'secret' ) {
+        console.log('error');
         throw new UserInputError("wrong credentials")
       }
   
@@ -157,6 +161,7 @@ const resolvers = {
         username: user.username,
         id: user._id,
       }
+      console.log(userForToken);
   
       return { value: jwt.sign(userForToken, JWT_SECRET) }
     },
