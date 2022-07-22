@@ -23,6 +23,8 @@ const getNoSsnPatients = (): NoSsnPatient[] => {
 };
 
 
+
+
 const findPatientById = (id: string): Patient | undefined => {
     return patients.find(p => p.id === id)
 }

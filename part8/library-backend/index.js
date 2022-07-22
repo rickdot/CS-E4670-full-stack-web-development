@@ -42,6 +42,7 @@ const resolvers = {
         return books.filter(e => e.author.name===args.author)
       }
       if(args.genre && !args.author){
+        console.log(books.filter(e => e.genres.includes(args.genre))  );
         return books.filter(e => e.genres.includes(args.genre))  
       }
       if(args.author && args.genre){
@@ -53,12 +54,12 @@ const resolvers = {
 
     allAuthors: async () => {
       const res = await Author.find({})
-      // console.log(res);
-      // console.log(res);
       return res
     },
 
     me: (root, args, context) => {
+      console.log('-----me-----');
+      console.log(context.currentUser);
       return context.currentUser
     }
 
@@ -149,19 +150,21 @@ const resolvers = {
     },
 
     login: async (root, args) => {
-      console.log(args);
       const user = await User.findOne({ username: args.username })
+      console.log(user);
   
       if ( !user || args.password !== 'secret' ) {
         console.log('error');
         throw new UserInputError("wrong credentials")
       }
+
+      console.log("logged in");
   
       const userForToken = {
         username: user.username,
         id: user._id,
       }
-      console.log(userForToken);
+      
   
       return { value: jwt.sign(userForToken, JWT_SECRET) }
     },

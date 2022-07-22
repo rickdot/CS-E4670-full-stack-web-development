@@ -14,6 +14,8 @@ import { TableBody } from "@material-ui/core";
 
 const PatientListPage = () => {
   const [{ patients }, dispatch] = useStateValue();
+  // console.log(patients);
+  
 
   const [modalOpen, setModalOpen] = React.useState<boolean>(false);
   const [error, setError] = React.useState<string>();
@@ -51,6 +53,7 @@ const PatientListPage = () => {
           Patient list
         </Typography>
       </Box>
+
       <Table style={{ marginBottom: "1em" }}>
         <TableHead>
           <TableRow>
@@ -73,12 +76,14 @@ const PatientListPage = () => {
           ))}
         </TableBody>
       </Table>
+
       <AddPatientModal
         modalOpen={modalOpen}
         onSubmit={submitNewPatient}
         error={error}
         onClose={closeModal}
       />
+      
       <Button variant="contained" onClick={() => openModal()}>
         Add New Patient
       </Button>

@@ -9,6 +9,7 @@ import { ALL_AUTHORS, EDIT_BIRTHYEAR } from '../queries'
 
 const Authors = (props) => {
   const result = useQuery(ALL_AUTHORS)
+  // console.log(result.data);
 
   const [born, setBorn] = useState('')
   const [selected, setSelected] = useState(null)
@@ -69,8 +70,8 @@ const Authors = (props) => {
 
       <h3>Set birthyear</h3>
       <form onSubmit={submitBirthyear}>
-        <select onChange={handleChange}>
-          <option disabled selected value> -- select an option -- </option>
+        <select onChange={handleChange} defaultValue={123}>
+          <option value={"default"}> -- select an option -- </option>
           {authors.map(a => (
             <option value={a.name} key={a.name}>{a.name}</option>
           ))}
