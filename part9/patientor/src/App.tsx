@@ -1,40 +1,17 @@
 import React from "react";
 import axios from "axios";
-import { BrowserRouter as Router, Route, Link, Routes, useParams } from "react-router-dom";
-import { Button, Divider, Container} from "@material-ui/core";
-import { useStateValue } from "../state";
+import { BrowserRouter as Router, Route, Link, Routes } from "react-router-dom";
+import { Button, Divider, Container } from "@material-ui/core";
 
 import { apiBaseUrl } from "./constants";
-import { Patient } from "./types";
+import { useStateValue, setPatientList} from "./state";
+import { Diagnosis, Patient } from "./types";
 
 import PatientListPage from "./PatientListPage";
 import { Typography } from "@material-ui/core";
+import PatientInfoPage from "./PatientInfoPage";
 
-const PatientInfo = () => {
-  
-  const [{ patients }] = useStateValue();
-  const {id} = useParams<{id: string}>();
-  console.log(patients);
-  console.log(id);
-  
-  const patient = Object.values(patients).find(e => e.id === id);
-  console.log(patient);
 
-  if(patient){
-    return (
-      <div>
-        <h2>{patient.name}</h2>
-        <p>ssn: {patient.ssn}</p>
-        <p>occupation: {patient.occupation}</p>
-      </div>
-    );
-  }
-
-  return null;
-  
-  
-  
-};
 
 const App = () => {
   const [, dispatch] = useStateValue();
@@ -46,12 +23,26 @@ const App = () => {
         const { data: patientListFromApi } = await axios.get<Patient[]>(
           `${apiBaseUrl}/patients`
         );
-        dispatch({ type: "SET_PATIENT_LIST", payload: patientListFromApi });
+        // dispatch({ type: "SET_PATIENT_LIST", payload: patientListFromApi });
+        dispatch(setPatientList(patientListFromApi));
       } catch (e) {
         console.error(e);
       }
     };
     void fetchPatientList();
+
+    const fetchDiagnoses = async () => {
+      try {
+        const { data: diagnosesFromApi } = await axios.get<Diagnosis[]>(
+          `${apiBaseUrl}/diagnoses`
+        );
+        dispatch({ type: "SET_DIAGNOSES", payload: diagnosesFromApi });
+        // dispatch(setPatientList(patientListFromApi));
+      } catch (e) {
+        console.error(e);
+      }
+    };
+    void fetchDiagnoses();
   }, [dispatch]);
 
   return (
@@ -67,7 +58,7 @@ const App = () => {
           <Divider hidden />
           <Routes>
             <Route path="/" element={<PatientListPage />} />
-            <Route path="/patient/:id" element={<PatientInfo />} />
+            <Route path="/patients/:id" element={<PatientInfoPage />} />
           </Routes>
         </Container>
       </Router>
@@ -76,3 +67,4 @@ const App = () => {
 };
 
 export default App;
+

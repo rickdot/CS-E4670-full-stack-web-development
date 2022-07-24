@@ -1,49 +1,67 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
-
-import { Patient, NoSsnPatient, NewPatient } from '../types'
-import patientsData from '../../data/patients.json'
-import { v1 as uuid } from 'uuid'
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 
 
-const patients: Array<Patient> = patientsData
+// import patientData from '../../data/patients';
+import patients from '../../data/patients';
 
-const getPatients = (): Patient[] => {
-    return patients
-}
+import { Patient, PatientNoSsn, NewPatient, NewEntry,  } from '../types';
 
-const getNoSsnPatients = (): NoSsnPatient[] => {
-    return patients.map(({ id, name, dateOfBirth, gender, occupation }) => ({
-      id,
-      name,
-      dateOfBirth,
-      gender,
-      occupation
-    }));
+import { v1 as uuid } from 'uuid';
+
+const getPatients = (): Array<Patient> => {
+  return patients;
+};
+
+const getPatientsNoSsn = (): Array<PatientNoSsn> => {
+  return patients.map(({ id, name, dateOfBirth, gender, occupation }) => ({
+    id,
+    name,
+    dateOfBirth,
+    gender,
+    occupation,
+  }));
 };
 
 
 
 
-const findPatientById = (id: string): Patient | undefined => {
-    return patients.find(p => p.id === id)
-}
+const findById = (id: string): Patient | undefined => {
+  const entry = patients.find(d => d.id === id);
+  return entry;
+};
 
-const addPatient = (object: NewPatient): Patient => {
+
+const addPatient = ( entry: NewPatient ): Patient => {
+    const id = uuid();
     const newPatient = {
+      id: id,
+      ...entry
+    };
+  
+    patients.push(newPatient);
+    return newPatient;
+};
+
+const addEntry = (id: string, entry: NewEntry): Patient | undefined => {
+  const patient = patients.find(patient => patient.id == id);
+  if (patient) {
+    const newEntry = {
         id: uuid(),
-        ...object,
-    }
-    patientsData.push(newPatient)
-    
-    return newPatient
-}
+        ...entry
+    };
+    patient.entries.push(newEntry);
+  }
+  return patient;
+};
 
 
 export default {
-    getPatients,
-    getNoSsnPatients,
-    findPatientById,
-    addPatient,
-    
-}
+  getPatients,
+  getPatientsNoSsn,
+  findById,
+  addPatient,
+  addEntry
+
+};
+
